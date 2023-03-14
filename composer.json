@@ -1,0 +1,11 @@
+{
+  "require": {
+    "php": "~8.1.0",
+    "catfan/medoo": "^2.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "FileUploader\\Api\\Src\\": "api/src/"
+    }
+  }
+}

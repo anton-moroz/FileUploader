@@ -1,0 +1,59 @@
+version: '3.5'
+
+services:
+  nginx:
+    container_name: file-uploader-nginx
+    build:
+      dockerfile: infrastructure/docker/nginx/Dockerfile
+      context: .
+      args:
+        - NGINX_VERSION=1.22.1
+    links:
+      - php-fpm
+    volumes:
+      - ./:/var/www/html
+    ports:
+      - "8080:80"
+
+  php-fpm:
+    container_name: file-uploader-php-fpm
+    build:
+      dockerfile: infrastructure/docker/php/Dockerfile
+      context: .
+      args:
+        - PHP_VERSION=8.1
+    links:
+      - database
+    env_file:
+      - .env
+    volumes:
+      - ./:/var/www/html
+
+  node:
+    build:
+      dockerfile: ./infrastructure/docker/node/Dockerfile
+      context: "."
+      args:
+        - NODE_VERSION=18.14.1
+    container_name: file-uploader-node
+    links:
+      - php-fpm
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    tty: true
+
+  database:
+    container_name: file-uploader-database
+    build:
+      dockerfile: ./infrastructure/docker/mysql/Dockerfile
+      context: .
+      args:
+        - MYSQL_VERSION=8.0
+    ports:
+      - "3306:3306"
+    restart: always
+    env_file:
+      - ./infrastructure/docker/mysql/.env
+    volumes:
+      - ./_database/mysql:/var/lib/mysql
