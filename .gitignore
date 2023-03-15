@@ -4,4 +4,4 @@ node_modules/*
 .idea/*
 api/uploads/*
 api/js/*
-.env
+/.env
